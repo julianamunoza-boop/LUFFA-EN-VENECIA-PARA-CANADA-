@@ -5,24 +5,28 @@ import { BusinessPlan } from "../types";
 export const generateLufaBusinessPlan = async (): Promise<BusinessPlan> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
   
-  const prompt = `Genera un plan de negocios detallado y profesional para el cultivo, transformación y exportación de Lufa (Luffa aegyptiaca) desde América Latina hacia el mercado de Canadá. 
-  El mercado canadiense valora la sostenibilidad, los productos eco-friendly y los accesorios de spa de lujo.
-  
-  Enfócate en productos de alta rentabilidad como:
-  1. Esponjas de spa tratadas con aceites esenciales.
-  2. Discos exfoliantes faciales de alta calidad.
-  3. Filtros industriales biodegradables.
-  4. Empaques compostables basados en fibra de lufa.
+  const prompt = `Genera un plan de negocios técnico y financiero para el cultivo y exportación de Lufa hacia Canadá, centrado en productos de ALTA GAMA para el sector Salud/Wellness y Adultos Mayores.
 
-  El documento debe estar en español y seguir esta estructura:
-  - Título del Proyecto
-  - Resumen Ejecutivo
-  - Análisis del Mercado de Canadá (demanda de productos naturales, regulaciones de importación).
-  - Proceso de Producción (cultivo orgánico, cosecha, secado).
-  - Transformación y Valor Agregado (diseño de productos premium).
-  - Estrategia de Exportación y Logística.
-  - Proyecciones Financieras (ROI, márgenes de ganancia).
-  - Conclusión.`;
+  REQUERIMIENTOS ESPECÍFICOS:
+  1. PRODUCTOS: Chanclas de lufa ergonómicas con estándares de descanso y seguridad anti-caídas (suela antideslizante, soporte de arco) para personas con discapacidad o adultos mayores. Además, sets de SPA premium.
+  2. FLUJOGRAMA: Pasos exactos desde cultivo -> cosecha -> transformación (diseño ergonómico) -> control de calidad -> empaque -> exportación.
+  3. SISTEMA DE COSTOS: Lista detallada de costos estimados de producción, transformación y logística.
+  4. CRONOLOGÍA: Proyección en tiempo real desde la siembra hasta la entrega final al cliente en Canadá.
+
+  ESTRUCTURA JSON REQUERIDA:
+  {
+    "title": "Nombre profesional del proyecto",
+    "executiveSummary": "Resumen ejecutivo",
+    "marketAnalysis": "Análisis mercado Canadá",
+    "productionProcess": "Detalles del cultivo orgánico",
+    "productSpecifications": "Detalle técnico de las chanclas ergonómicas y productos de SPA",
+    "exportStrategy": "Logística y aranceles",
+    "flowchart": [{"step": 1, "activity": "Actividad", "description": "Detalle"}],
+    "costAnalysis": [{"concept": "Concepto", "unit": "Unidad", "estimatedCost": "Precio USD"}],
+    "timeline": [{"period": "Mes X", "phase": "Fase", "milestones": "Hitos"}],
+    "financialProjections": "Análisis de rentabilidad",
+    "conclusion": "Conclusión"
+  }`;
 
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -36,18 +40,51 @@ export const generateLufaBusinessPlan = async (): Promise<BusinessPlan> => {
           executiveSummary: { type: Type.STRING },
           marketAnalysis: { type: Type.STRING },
           productionProcess: { type: Type.STRING },
-          transformationProducts: { type: Type.STRING },
+          productSpecifications: { type: Type.STRING },
           exportStrategy: { type: Type.STRING },
+          flowchart: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                step: { type: Type.NUMBER },
+                activity: { type: Type.STRING },
+                description: { type: Type.STRING }
+              }
+            }
+          },
+          costAnalysis: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                concept: { type: Type.STRING },
+                unit: { type: Type.STRING },
+                estimatedCost: { type: Type.STRING }
+              }
+            }
+          },
+          timeline: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                period: { type: Type.STRING },
+                phase: { type: Type.STRING },
+                milestones: { type: Type.STRING }
+              }
+            }
+          },
           financialProjections: { type: Type.STRING },
           conclusion: { type: Type.STRING }
         },
-        required: ["title", "executiveSummary", "marketAnalysis", "productionProcess", "transformationProducts", "exportStrategy", "financialProjections", "conclusion"]
+        required: ["title", "executiveSummary", "flowchart", "costAnalysis", "timeline", "productSpecifications"]
       }
     }
   });
 
   if (!response.text) {
-    throw new Error("No se pudo generar el contenido del plan de negocios.");
+    throw new Error("Error en la respuesta de la IA.");
   }
 
   return JSON.parse(response.text.trim()) as BusinessPlan;

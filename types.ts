@@ -1,7 +1,20 @@
 
-export interface ProjectSection {
-  title: string;
-  content: string;
+export interface FlowStep {
+  step: number;
+  activity: string;
+  description: string;
+}
+
+export interface CostItem {
+  concept: string;
+  unit: string;
+  estimatedCost: string;
+}
+
+export interface TimelinePhase {
+  period: string;
+  phase: string;
+  milestones: string;
 }
 
 export interface BusinessPlan {
@@ -9,8 +22,11 @@ export interface BusinessPlan {
   executiveSummary: string;
   marketAnalysis: string;
   productionProcess: string;
-  transformationProducts: string;
+  productSpecifications: string; // Enfoque en ergonomía y seguridad
   exportStrategy: string;
+  flowchart: FlowStep[];
+  costAnalysis: CostItem[];
+  timeline: TimelinePhase[];
   financialProjections: string;
   conclusion: string;
 }
