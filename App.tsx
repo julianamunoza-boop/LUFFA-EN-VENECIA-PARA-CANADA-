@@ -17,8 +17,8 @@ import {
   CheckCircle,
   FileText
 } from 'lucide-react';
-import { generateLufaBusinessPlan } from './services/geminiService';
-import { BusinessPlan, GenerationStatus } from './types';
+import { generateLufaBusinessPlan } from './services/geminiService.ts';
+import { BusinessPlan, GenerationStatus } from './types.ts';
 
 const App: React.FC = () => {
   const [status, setStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
@@ -85,7 +85,6 @@ const App: React.FC = () => {
       cursorY += 5;
     });
 
-    // Añadir flujo y costos de forma simplificada al PDF
     addText("ANÁLISIS DE COSTOS", 14, true, [16, 185, 129]);
     plan.costAnalysis.forEach(c => {
       addText(`• ${c.concept}: ${c.estimatedCost}`, 9, false, [71, 85, 105]);
@@ -105,7 +104,6 @@ const App: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <div className="h-6 w-32 bg-emerald-600 rounded-sm"></div>
-              {/* Representación de la barra verde de la imagen */}
             </div>
           </div>
           {status === GenerationStatus.COMPLETED && (
@@ -122,27 +120,27 @@ const App: React.FC = () => {
       <main className="flex-grow">
         {status === GenerationStatus.IDLE && (
           <div className="max-w-5xl mx-auto px-6 pt-20 pb-12 text-center">
-            <h1 className="text-6xl font-extrabold tracking-tight text-slate-900 mb-6">
+            <h1 className="text-6xl font-extrabold tracking-tight text-slate-900 mb-6 leading-tight">
               Proyecto Lufa: <span className="text-emerald-600">Cultivo y Transformación</span>
             </h1>
             <p className="text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
               Diseñamos el plan técnico para la exportación de productos de lufa de alta gama hacia el mercado canadiense.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
                <div className="p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                  <Package className="text-emerald-600 mb-4 mx-auto w-10 h-10" />
+                  <Package className="text-emerald-600 mb-4 w-10 h-10" />
                   <h3 className="font-bold text-lg mb-2">Transformación Premium</h3>
-                  <p className="text-sm text-slate-500">Chanclas ergonómicas y sets de SPA.</p>
+                  <p className="text-sm text-slate-500">Chanclas ergonómicas y sets de SPA de lujo.</p>
                </div>
                <div className="p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                  <Globe className="text-blue-600 mb-4 mx-auto w-10 h-10" />
+                  <Globe className="text-blue-600 mb-4 w-10 h-10" />
                   <h3 className="font-bold text-lg mb-2">Canales de Exportación</h3>
-                  <p className="text-sm text-slate-500">Logística directa hacia Canadá.</p>
+                  <p className="text-sm text-slate-500">Logística directa hacia Ontario, Quebec y BC.</p>
                </div>
                <div className="p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                  <ShieldCheck className="text-amber-600 mb-4 mx-auto w-10 h-10" />
+                  <ShieldCheck className="text-amber-600 mb-4 w-10 h-10" />
                   <h3 className="font-bold text-lg mb-2">Senior Care Standard</h3>
-                  <p className="text-sm text-slate-500">Seguridad y bienestar para el adulto mayor.</p>
+                  <p className="text-sm text-slate-500">Seguridad certificada para el adulto mayor.</p>
                </div>
             </div>
             <button 
@@ -176,7 +174,7 @@ const App: React.FC = () => {
         )}
 
         {status === GenerationStatus.COMPLETED && plan && (
-          <div className="max-w-6xl mx-auto px-6 py-12 space-y-12">
+          <div className="max-w-6xl mx-auto px-6 py-12 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Cabecera del Plan */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-10 rounded-[2rem] shadow-sm border border-slate-100">
               <div>
@@ -195,7 +193,6 @@ const App: React.FC = () => {
 
             {/* Dashboard de Datos */}
             <div className="grid lg:grid-cols-3 gap-8">
-              {/* Columna Izquierda: Flujo y Costos */}
               <div className="space-y-8">
                 <div className="bg-slate-900 text-white p-8 rounded-[2rem] shadow-lg">
                   <h3 className="flex items-center gap-2 text-xl font-bold mb-8 text-emerald-400">
@@ -236,7 +233,6 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Columna Derecha: Contenido Detallado */}
               <div className="lg:col-span-2 space-y-8">
                 <div className="bg-white p-10 rounded-[2rem] border border-slate-100 shadow-sm">
                   <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
@@ -271,13 +267,9 @@ const App: React.FC = () => {
                       </div>
                     </section>
 
-                    {/* Conclusión Estratégica con el estilo de la imagen */}
                     <section className="conclusion-card p-10 rounded-[2rem] shadow-2xl relative overflow-hidden">
-                       <div className="absolute top-0 right-0 p-8 opacity-10">
-                          <TrendingUp size={120} />
-                       </div>
                        <h4 className="text-2xl font-bold text-white mb-6">Conclusión Estratégica</h4>
-                       <p className="text-slate-300 leading-relaxed mb-8">
+                       <p className="text-slate-300 leading-relaxed">
                           {plan.conclusion}
                        </p>
                     </section>
@@ -298,14 +290,10 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Footer */}
       <footer className="bg-white border-t py-12 mt-20">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <p className="text-slate-400 text-sm font-medium">
             © 2024 LufaExport AI. Todos los derechos reservados.
-          </p>
-          <p className="text-slate-300 text-xs mt-2 uppercase tracking-widest font-bold">
-            Basado en datos de comercio exterior Canadá - América Latina.
           </p>
         </div>
       </footer>

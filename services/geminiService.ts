@@ -83,9 +83,38 @@ export const generateLufaBusinessPlan = async (): Promise<BusinessPlan> => {
     }
   });
 
-  if (!response.text) {
-    throw new Error("Error en la respuesta de la IA.");
+  const rawText = response.text?.trim();
+  if (!rawText) {
+    throw new Error("La respuesta de la IA está vacía o no es válida.");
   }
 
-  return JSON.parse(response.text.trim()) as BusinessPlan;
+  let data: any;
+  try {
+    data = JSON.parse(rawText);
+  } catch (e) {
+    throw new Error("El formato de respuesta de la IA no es un JSON válido.");
+  }
+
+  // Validación de propiedades requeridas según el esquema
+  const requiredFields = [
+    "title", 
+    "executiveSummary", 
+    "flowchart", 
+    "costAnalysis", 
+    "timeline", 
+    "productSpecifications",
+    "marketAnalysis",
+    "financialProjections",
+    "conclusion"
+  ];
+
+  const missingFields = requiredFields.filter(field => !data[field]);
+
+  if (missingFields.length > 0) {
+    const errorMsg = `Error de integridad: Faltan campos obligatorios en el plan generado: ${missingFields.join(", ")}`;
+    console.error(errorMsg);
+    throw new Error(errorMsg);
+  }
+
+  return data as BusinessPlan;
 };
